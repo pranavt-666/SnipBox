@@ -3,6 +3,8 @@ from api import models
 from api import serializers
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet, ModelViewSet,mixins
+from rest_framework.decorators import action
+from rest_framework.reverse import reverse
 
 
 # Create your views here.
@@ -26,9 +28,7 @@ class TagView(ViewSet):
 
 class SnippetModelView(ViewSet):
 
-    # serializer_class = serializers.SnippetSerializer
-    # queryset = models.Snippet.objects.all()
-    # # http_method_names = ['get', 'post',]
+
     def create(self, request, *args, **kwargs):
         user = request.user
         tag = request.data.get('tag')
@@ -63,5 +63,19 @@ class SnippetModelView(ViewSet):
         serializer = serializers.SnippetSerializer(data=queryset, many=True)
         return Response(data=serializer.data)
 
+    @action(detail=False, methods=['get'])
+    def overview(self, request):
+        snippets = self.get_queryset()
+        total_count = snippets.count()
+        snippet_list = [{
+            'id': snippet.id,
+            'note': snippet.note,
+            'url': reverse('todo-detail', args=[snippet.id], request=request)
+        } for snippet in snippets]
+        
+        return Response({
+            'total_count': total_count,
+            'snippets': snippet_list
+        })
         
     
