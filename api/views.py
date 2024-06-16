@@ -7,11 +7,16 @@ from rest_framework.decorators import action
 from rest_framework.reverse import reverse
 
 
-# Create your views here.
-
-
 class TagView(ViewSet):
+    """
+    ViewSet for managing Tag objects.
     
+    list:
+    Retrieves a list of all tags.
+
+    retrieve:
+    Retrieves a specific tag and all associated snippets.
+    """
     def list(self, request, *args, **kwargs):
         try:
             queryset = models.Tag.objects.all()
@@ -34,7 +39,24 @@ class TagView(ViewSet):
 
 
 class SnippetModelView(ViewSet):
+    """
+    ViewSet for managing Snippet objects.
+    
+    create:
+    Create a new snippet.
 
+    retrieve:
+    Retrieve a specific snippet.
+
+    update:
+    Update a specific snippet.
+
+    destroy:
+    Delete a specific snippet.
+
+    overview:
+    Retrieve the total count and list of all snippets.
+    """
 
     def create(self, request, *args, **kwargs):
         try:
@@ -59,10 +81,11 @@ class SnippetModelView(ViewSet):
                 serializer = serializers.SnippetSerializer(snippet)
                 return Response(data=serializer.data)
             else:
-                return Response({'res':''})
+                return Response({'res':'you are not the user to retrieve'})
         except Exception as msg:
             msg = str(msg)
-            return Response({'res':msg})    
+            return Response({'res':msg})   
+
     def update(self, request, *args, **kwargs):
         try:
             snippet_id = kwargs.get('pk')
@@ -78,8 +101,6 @@ class SnippetModelView(ViewSet):
             msg = str(msg)
             return Response({'res':msg})
 
-        # else:
-        #     return Response({'res':'error in the id'})
     def destroy(self, request, *args, **kwargs):
         try:
             snippet_id = kwargs.get('pk')
@@ -102,7 +123,6 @@ class SnippetModelView(ViewSet):
                 'note': snippet.note,
                 'url': reverse('snippets-detail', args=[snippet.id], request=request)
             } for snippet in snippets]
-            
             return Response({
                 'total_count': total_count,
                 'snippets': snippet_list
