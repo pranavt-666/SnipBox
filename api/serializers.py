@@ -9,12 +9,12 @@ class TagSerializer(serializers.Serializer):
 class SnippetSerializer(serializers.ModelSerializer):
     created_time = serializers.DateTimeField(read_only=True)
     updated_time = serializers.DateTimeField(read_only=True)
-    created_user = serializers.CharField(read_only=True)
-    tag = serializers.CharField(read_only=True)
+    # created_user = serializers.CharField(read_only=True)
+    # tag = serializers.CharField(read_only=True)
 
     class Meta:
         model = models.Snippet
-        fields = '__all__'
+        fields = ['title', 'note','created_time', 'updated_time']
 
     def create(self, validated_data):
         user = self.context.get('user')

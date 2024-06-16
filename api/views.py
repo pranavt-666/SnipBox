@@ -43,8 +43,11 @@ class SnippetModelView(ViewSet):
     def retrieve(self, request, *args, **kwargs):
         snippet_id = kwargs.get('pk')
         snippet = models.Snippet.objects.get(id=snippet_id)
-        serialzi
-        return Response(data)
+        if snippet.created_user == request.user:
+            serializer = serializers.SnippetSerializer(snippet)
+            return Response(data=serializer.data)
+        else:
+            return Response({'res':''})
 
         
     
