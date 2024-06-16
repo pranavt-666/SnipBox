@@ -2,7 +2,7 @@ from django.shortcuts import render
 from api import models
 from api import serializers
 from rest_framework.response import Response
-from rest_framework.viewsets import ViewSet, ModelViewSet
+from rest_framework.viewsets import ViewSet, ModelViewSet,mixins
 
 
 # Create your views here.
@@ -23,11 +23,28 @@ class TagView(ViewSet):
         return Response(data=serializer.data)
 
 
-class SnippetModelView(ModelViewSet):
 
-    serializer_class = serializers.SnippetSerializer
-    queryset = models.Snippet.objects.all() 
+class SnippetModelView(ViewSet):
 
-    # def create(self, )
+    # serializer_class = serializers.SnippetSerializer
+    # queryset = models.Snippet.objects.all()
+    # # http_method_names = ['get', 'post',]
+    def create(self, request, *args, **kwargs):
+        user = request.user
+        tag = request.data.get('tag')
+        serializer = serializers.SnippetSerializer(data=request.data,
+        context={'user':user, 'tag':tag})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+        else:
+            return Response(data=serializer.errors) 
+
+    def retrieve(self, request, *args, **kwargs):
+        snippet_id = kwargs.get('pk')
+        snippet = models.Snippet.objects.get(id=snippet_id)
+        serialzi
+        return Response(data)
+
         
     

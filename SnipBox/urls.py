@@ -27,6 +27,7 @@ from api import views
 router = DefaultRouter()
 
 router.register('tags', views.TagView, basename='tags')
+router.register('snippets', views.SnippetModelView, basename='snippets')
 # router.register('')
 urlpatterns = [
     path('admin/', admin.site.urls),

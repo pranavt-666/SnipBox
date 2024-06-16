@@ -15,3 +15,13 @@ class SnippetSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Snippet
         fields = '__all__'
+
+    def create(self, validated_data):
+        user = self.context.get('user')
+        tag = self.context.get('tag')
+        if tag:
+            tag, created = models.Tag.objects.get_or_create(title=tag)
+            snippet = models.Snippet.objects.create(tag=tag,created_user=user, **validated_data)
+            return snippet
+        else:
+            return models.Snippet.objects.create(created_user=user,**validated_data)
