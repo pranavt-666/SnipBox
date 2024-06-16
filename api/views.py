@@ -48,6 +48,20 @@ class SnippetModelView(ViewSet):
             return Response(data=serializer.data)
         else:
             return Response({'res':''})
+        
+    def update(self, request, *args, **kwargs):
+        snippet_id = kwargs.get('pk')
+        snippet = models.Snippet.objects.get(id=snippet_id)
+        serializer = serializers.SnippetSerializer(data=request.data, instance=snippet)
+        return Response(data=serializer.data)
+    
+    def destroy(self, request, *args, **kwargs):
+        snippet_id = kwargs.get('pk')
+        snippet = models.Snippet.objects.get(id=snippet_id)
+        snippet.delete()
+        queryset = models.Snippet.objects.all()
+        serializer = serializers.SnippetSerializer(data=queryset, many=True)
+        return Response(data=serializer.data)
 
         
     
