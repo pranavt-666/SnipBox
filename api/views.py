@@ -53,7 +53,11 @@ class SnippetModelView(ViewSet):
         snippet_id = kwargs.get('pk')
         snippet = models.Snippet.objects.get(id=snippet_id)
         serializer = serializers.SnippetSerializer(data=request.data, instance=snippet)
-        return Response(data=serializer.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+        else:
+            return Response(data=serializer.errors)
     
     def destroy(self, request, *args, **kwargs):
         snippet_id = kwargs.get('pk')
